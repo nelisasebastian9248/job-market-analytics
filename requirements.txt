@@ -1,0 +1,14 @@
+# Core data work
+pandas>=2.2.0
+requests>=2.32.0
+python-dotenv>=1.0.1
+
+# Snowflake + transformations
+snowflake-connector-python>=3.14.0
+dbt-snowflake>=1.10.0
+
+# App layer
+streamlit>=1.44.0
+
+# Optional for local analysis and tests
+pytest>=8.3.0
