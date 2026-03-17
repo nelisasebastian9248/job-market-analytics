@@ -56,6 +56,21 @@ def format_repo_name(full_name: str) -> str:
     return full_name.split("/")[-1].replace("-", " ").title()
 
 
+def heading_with_info(title: str, help_text: str, level: int = 2) -> None:
+    st.markdown(
+        f"""
+        <div style="display:flex; align-items:center; gap:0.45rem; margin-bottom:0.25rem;">
+            <h{level} style="margin:0; color:#fff4fb;">{title}</h{level}>
+            <span title="{help_text}"
+                  style="display:inline-flex; align-items:center; justify-content:center; width:1.2rem; height:1.2rem; border-radius:999px; background:rgba(255,92,177,0.18); color:#ffd6ea; font-size:0.78rem; font-weight:700; cursor:help;">
+                i
+            </span>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
 def build_bar_chart(data: pd.DataFrame, category_col: str, value_col: str) -> alt.Chart:
     return (
         alt.Chart(data)
@@ -267,6 +282,16 @@ def main() -> None:
         unsafe_allow_html=True,
     )
 
+    with st.expander("How to use this dashboard"):
+        st.markdown(
+            """
+            - Use **Skill Demand** to see which tracked data engineering tools appear most often in live job postings.
+            - Use **Salary Benchmarks** to compare salary ranges by title and location.
+            - Use **Tool Momentum** to see GitHub activity around data platform and analytics engineering tools.
+            - Hover over the small **i** icons next to KPIs and section titles for quick explanations.
+            """
+        )
+
     skill_df = load_dataframe(SKILL_DEMAND_SQL)
     github_df = load_dataframe(GITHUB_MOMENTUM_SQL)
     salary_df = load_dataframe(SALARY_BENCHMARKS_SQL)
@@ -280,17 +305,36 @@ def main() -> None:
     )
 
     metric_col_1, metric_col_2, metric_col_3, metric_col_4 = st.columns(4)
-    metric_col_1.metric("Tracked skill mentions", f"{top_skill_mentions}")
-    metric_col_2.metric("GitHub repos tracked", f"{tracked_repos}")
-    metric_col_3.metric("Salary benchmark rows", f"{salary_rows}")
-    metric_col_4.metric("Current leaders", f"{top_skill} / {top_repo}")
+    metric_col_1.metric(
+        "Tracked skill mentions",
+        f"{top_skill_mentions}",
+        help="Total matched tool mentions found across the current job posting dataset.",
+    )
+    metric_col_2.metric(
+        "GitHub repos tracked",
+        f"{tracked_repos}",
+        help="Number of open-source repositories included in the tool momentum comparison.",
+    )
+    metric_col_3.metric(
+        "Salary benchmark rows",
+        f"{salary_rows}",
+        help="Grouped salary records by title and location available for dashboard analysis.",
+    )
+    metric_col_4.metric(
+        "Current leaders",
+        f"{top_skill} / {top_repo}",
+        help="Top current skill by hiring demand and top repository by momentum score.",
+    )
 
     skills_tab, salary_tab, tools_tab = st.tabs(
         ["Skill Demand", "Salary Benchmarks", "Tool Momentum"]
     )
 
     with skills_tab:
-        st.subheader("Top Skill Demand")
+        heading_with_info(
+            "Top Skill Demand",
+            "Shows how often each tracked tool skill appears across current data engineering and analytics engineering job postings.",
+        )
         st.markdown(
             '<div class="section-note">These counts come from tracked skills matched against current data engineering and analytics engineering job descriptions.</div>',
             unsafe_allow_html=True,
@@ -314,7 +358,10 @@ def main() -> None:
         render_html_table(skill_display_df)
 
     with salary_tab:
-        st.subheader("Salary Benchmarks")
+        heading_with_info(
+            "Salary Benchmarks",
+            "Summarizes average salary ranges by job title and location using postings that include salary information.",
+        )
         st.caption(
             "Grouped by job title and source location so you can see where salary bands concentrate."
         )
@@ -343,7 +390,10 @@ def main() -> None:
         render_html_table(salary_display_df)
 
     with tools_tab:
-        st.subheader("Data Engineering Tool Momentum")
+        heading_with_info(
+            "Data Engineering Tool Momentum",
+            "Compares tracked repositories using a simple momentum score based on stars, forks, and watchers.",
+        )
         st.markdown(
             '<div class="section-note">GitHub metrics here represent ecosystem activity around data platform and analytics engineering tools, rather than a direct one-to-one match for every hiring skill.</div>',
             unsafe_allow_html=True,

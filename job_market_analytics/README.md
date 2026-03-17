@@ -1,15 +1,21 @@
-Welcome to your new dbt project!
+## dbt Project
 
-### Using the starter project
+This folder contains the dbt transformation layer for Job Market Analytics.
 
-Try running the following commands:
-- dbt run
-- dbt test
+Key model groups:
 
+- `models/staging`
+  - Source-backed cleanup models for job postings and GitHub repositories
+- `models/intermediate`
+  - Skill extraction logic from job descriptions
+- `models/marts`
+  - Final dashboard-ready tables for skill demand, salary benchmarks, and GitHub momentum
 
-### Resources:
-- Learn more about dbt [in the docs](https://docs.getdbt.com/docs/introduction)
-- Check out [Discourse](https://discourse.getdbt.com/) for commonly asked questions and answers
-- Join the [chat](https://community.getdbt.com/) on Slack for live discussions and support
-- Find [dbt events](https://events.getdbt.com) near you
-- Check out [the blog](https://blog.getdbt.com/) for the latest news on dbt's development and best practices
+Useful commands:
+
+```powershell
+.\run_dbt.ps1 debug
+.\run_dbt.ps1 seed --select skills
+.\run_dbt.ps1 run
+.\run_dbt.ps1 test
+```
