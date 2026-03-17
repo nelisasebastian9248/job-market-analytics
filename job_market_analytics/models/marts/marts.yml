@@ -1,0 +1,56 @@
+version: 2
+
+models:
+  - name: mart_skill_demand
+    description: Aggregated skill demand metrics derived from job posting descriptions.
+    columns:
+      - name: skill
+        description: Skill keyword tracked in the project seed list.
+        tests:
+          - not_null
+          - unique
+      - name: skill_mentions
+        description: Total number of matched skill mentions across job postings.
+        tests:
+          - not_null
+      - name: distinct_jobs
+        description: Count of distinct job postings mentioning the skill.
+        tests:
+          - not_null
+      - name: distinct_companies
+        description: Count of distinct companies mentioning the skill.
+        tests:
+          - not_null
+
+  - name: mart_github_repo_momentum
+    description: GitHub repository metrics and a simple derived momentum score.
+    columns:
+      - name: full_name
+        description: Full GitHub repository name in owner/repo format.
+        tests:
+          - not_null
+          - unique
+      - name: momentum_score
+        description: Simple score based on stars, forks, and subscribers.
+        tests:
+          - not_null
+
+  - name: mart_salary_benchmarks
+    description: Salary benchmark summary by job title and location.
+    columns:
+      - name: job_title
+        description: Job title from the posting source.
+        tests:
+          - not_null
+      - name: location_display_name
+        description: Display location from the source job posting.
+        tests:
+          - not_null
+      - name: job_postings
+        description: Number of postings contributing to the salary summary row.
+        tests:
+          - not_null
+      - name: avg_salary_min
+        description: Average of minimum salary values for the grouped postings.
+      - name: avg_salary_max
+        description: Average of maximum salary values for the grouped postings.

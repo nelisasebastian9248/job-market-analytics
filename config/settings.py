@@ -12,8 +12,13 @@ DEFAULT_GITHUB_REPOSITORIES = (
     "dbt-labs/dbt-core",
     "apache/airflow",
     "apache/spark",
+    "delta-io/delta",
+    "databricks/databricks-sdk-py",
     "snowflakedb/snowflake-connector-python",
-    "apache/kafka",
+    "python/cpython",
+    "dagster-io/dagster",
+    "kedro-org/kedro",
+    "prefecthq/prefect",
 )
 
 

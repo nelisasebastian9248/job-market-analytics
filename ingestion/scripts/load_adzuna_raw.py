@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 
-from ingestion.scripts.fetch_adzuna import fetch_adzuna_jobs
+from ingestion.scripts.fetch_adzuna import fetch_adzuna_jobs_for_roles
 from ingestion.utils.snowflake import get_snowflake_connection
 
 
@@ -47,11 +47,17 @@ where not exists (
 
 
 def main() -> None:
-    payload = fetch_adzuna_jobs(results_per_page=25, page=1, what="data analyst")
-    jobs = payload.get("results", [])
+    roles = ("data engineer", "analytics engineer")
+    jobs = fetch_adzuna_jobs_for_roles(
+        roles=roles,
+        results_per_page=25,
+        pages_per_role=4,
+    )
+    inserted_rows = 0
 
     with get_snowflake_connection() as connection:
         with connection.cursor() as cursor:
+            cursor.execute("truncate table RAW.JOB_POSTINGS")
             for job in jobs:
                 cursor.execute(
                     INSERT_JOB_POSTINGS_SQL,
@@ -72,8 +78,11 @@ def main() -> None:
                         str(job.get("id", "")),
                     ),
                 )
+                inserted_rows += cursor.rowcount
 
-    print(f"Loaded {len(jobs)} rows into RAW.JOB_POSTINGS.")
+    print(
+        f"Fetched {len(jobs)} jobs for {', '.join(roles)} and inserted {inserted_rows} rows into RAW.JOB_POSTINGS."
+    )
 
 
 if __name__ == "__main__":
